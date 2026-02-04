@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>To-Do List</title>
+    <link rel="stylesheet" href="./CSS/styles.css" />
+  </head>
+  <body>
+    <div class="authContainer">
+      <form>
+        <h1>Login</h1>
+        <p class="error">The information you have entered is not correct</p>
+        <label>
+          <p class="email">Email</p>
+          <input type="email" placeholder="Email" />
+        </label>
+        <label>
+          <p class="password">Password</p>
+          <input type="password" placeholder="Password" />
+        </label>
+        <label>
+          <p class="confirmPass">Confirm Password</p>
+          <input type="password" placeholder="Confirm Password" />
+        </label>
+        <button type="button" class="submitBtn">
+          <p>Submit</p>
+        </button>
+      </form>
+
+      <!-- This provides the user the option to navigate the authentication page -->
+      <div class="options">
+        <p>or</p>
+        <div>
+          <p>Already have an account?</p>
+          <p>Login</p>
+        </div>
+        <div>
+          <p>Don't have an account?</p>
+          <p>Register</p>
+        </div>
+      </div>
+    </div>
+    <script src="./JS/main.js"></script>
+  </body>
+</html>

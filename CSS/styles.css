@@ -1,0 +1,231 @@
+body {
+  background-color: #4b6c41;
+}
+
+.authContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* This allows the container to occupy the full parent width */
+  flex: 1;
+  padding: 24px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 400px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+form,
+.options {
+  width: 400px;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
+form input {
+  width: 100%;
+}
+h1 {
+  text-align: center;
+  font-size: 3rem;
+  color: white;
+}
+
+form label {
+  position: relative;
+  border: 1px solid #7e8d7a;
+  border-radius: 5px;
+}
+
+form input {
+  border: none;
+  background: white;
+  padding: 14px;
+}
+
+form input:focus {
+  border: none;
+  outline: none;
+}
+
+form label:focus-within {
+  border-color: #dfe5db;
+}
+
+form button {
+  background: #9dc08b;
+  color: rgb(246, 243, 243);
+  border: none;
+  padding: 14px 0;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: grid;
+  place-items: center;
+}
+form button:hover {
+  background: #afd89c;
+}
+
+.above {
+  top: 0;
+  left: 24px;
+  background: #40513b;
+  border: 3px solid #9dc08b;
+  font-size: 0.7rem;
+}
+
+.center {
+  top: 50%;
+  left: 6px;
+  border: 1px solid transparent;
+  opacity: 0;
+}
+
+.error {
+  color: coral;
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.completed {
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+
+/* styles the options, also includes line styling */
+.options {
+  padding: 14px 0;
+  overflow: hidden;
+  font-size: 0.9rem;
+  display: flex;
+  flex-direction: column;
+  color: white;
+  gap: 4px;
+}
+.options > p {
+  position: relative;
+  text-align: center;
+  width: fit-content;
+  color: white;
+  margin: 0 auto;
+  padding: 0 8px;
+}
+
+.options > p::after,
+.options > p::before {
+  position: absolute;
+  content: "";
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100vw;
+  height: 1.5px;
+  background: white;
+}
+
+.options > p::after {
+  right: 100%;
+}
+.options > p::before {
+  left: 100%;
+}
+
+.options div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  justify-content: center;
+}
+.options div p:last-of-type {
+  color: #90ff59;
+  cursor: pointer;
+  justify-content: center;
+}
+
+#todoContainer {
+  max-width: 600px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  font-family: 'Arial', sans-serif;
+}
+
+#todoContainer h2 {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+#todoList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.todoItem {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 12px;
+  margin-bottom: 10px;
+  background-color: #fff;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  transition: background-color 0.2s ease;
+}
+
+.todoItem:hover {
+  background-color: #e8f5e9;
+}
+
+.todoItem input[type="text"] {
+  flex: 1 1 150px;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.2s;
+}
+
+.todoItem input[type="text"]:focus {
+  border-color: #4caf50;
+  outline: none;
+}
+
+.todoItem button {
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.2s;
+}
+
+.todoItem button:hover {
+  opacity: 0.85;
+}
+
+.todoItem button:nth-of-type(1) { background-color: #4caf50; color: white; } 
+.todoItem button:nth-of-type(2) { background-color: #2196f3; color: white; } 
+.todoItem button:nth-of-type(3) { background-color: #ff9800; color: white; } 
+.todoItem button:nth-of-type(4) { background-color: #f44336; color: white; } 
+
+.completed input[type="text"] {
+  text-decoration: line-through;
+  color: #999;
+  background-color: #eee;
+}
