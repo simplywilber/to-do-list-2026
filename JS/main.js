@@ -1,12 +1,11 @@
 // State
-let isLoginMode = true; 
+let isLoginMode = true;
 
 // Cookie Helpers
 function setCookie(name, value, days = 1) {
   const expires = new Date(Date.now() + days * 864e5).toUTCString();
   document.cookie = `${name}=${encodeURIComponent(value)}; path=/; expires=${expires}`;
 }
-
 function getCookie(name) {
   return document.cookie.split("; ").reduce((r, v) => {
     const parts = v.split("=");
@@ -26,11 +25,9 @@ const passwordInput = form.querySelector('input[type="password"]');
 const confirmPasswordInput = form.querySelectorAll('input[type="password"]')[1];
 const submitBtn = document.querySelector(".submitBtn");
 const errorText = document.querySelector(".error");
-
 const options = document.querySelector(".options");
 const loginToggle = options.querySelectorAll("div")[0];
 const registerToggle = options.querySelectorAll("div")[1];
-
 const authContainer = document.querySelector(".authContainer");
 
 // Init
@@ -55,7 +52,6 @@ function switchToRegister() {
 // Event Listeners
 loginToggle.addEventListener("click", switchToLogin);
 registerToggle.addEventListener("click", switchToRegister);
-
 submitBtn.addEventListener("click", handleSubmit);
 
 // Submit Handler
@@ -94,7 +90,7 @@ async function handleSubmit() {
     // Save token in cookie
     setCookie("authToken", data.token);
 
-    // Hide auth form and show todos
+    // Show Todo UI
     showTodoUI();
     await fetchAndDisplayTodos();
 
@@ -121,14 +117,14 @@ function showTodoUI() {
   document.getElementById("todoForm").addEventListener("submit", createTodo);
 }
 
-// Fetch Todos (with Edit)
+// Fetch Todos
 async function fetchAndDisplayTodos() {
   const token = getCookie("authToken");
   if (!token) return;
 
   try {
     const res = await fetch("http://localhost:3000/todos", {
-      headers: { "Authorization": "Bearer " + token }
+      headers: { "Authorization": `Bearer ${token}` }
     });
 
     const todos = await res.json();
@@ -164,7 +160,6 @@ async function fetchAndDisplayTodos() {
       deleteBtn.textContent = "Delete";
       deleteBtn.addEventListener("click", () => deleteTodo(todo.id));
 
-      // Edit functionality
       editBtn.addEventListener("click", () => {
         titleInput.disabled = false;
         descInput.disabled = false;
@@ -195,112 +190,85 @@ async function fetchAndDisplayTodos() {
     console.error(err);
   }
 }
-// Edit Todo Function
-async function editTodo(id, title, description) {
-  const token = getCookie("authToken");
 
-  try {
-    await fetch(`http://localhost:3000/todos/${id}`, {
-      method: "PUT",
-      headers: {
-        "Authorization": "Bearer " + token,
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({ title, description })
-    });
-  } catch (err) {
-    console.error(err);
-  }
-}
-
-
-// Create Todo
+// CRUD Functions
 async function createTodo(e) {
   e.preventDefault();
   const token = getCookie("authToken");
   const title = document.getElementById("todoTitle").value.trim();
   const desc = document.getElementById("todoDesc").value.trim();
-
   if (!title || !desc) return;
 
   try {
-    const res = await fetch("http://localhost:3000/todos", {
+    await fetch("http://localhost:3000/todos", {
       method: "POST",
-      headers: { 
-        "Authorization": "Bearer " + token,
-        "Content-Type": "application/json" 
+      headers: {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
       },
       body: JSON.stringify({ title, description: desc })
     });
-
-    if (!res.ok) throw new Error("Failed to create todo");
-
     document.getElementById("todoForm").reset();
     await fetchAndDisplayTodos();
-
-  } catch (err) {
-    console.error(err);
-  }
+  } catch (err) { console.error(err); }
 }
 
-// Toggle Complete
-async function toggleComplete(id, completed) {
+async function editTodo(id, title, description) {
   const token = getCookie("authToken");
-
   try {
     await fetch(`http://localhost:3000/todos/${id}`, {
       method: "PUT",
       headers: {
-        "Authorization": "Bearer " + token,
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({ title, description })
+    });
+  } catch (err) { console.error(err); }
+}
+
+async function toggleComplete(id, completed) {
+  const token = getCookie("authToken");
+  try {
+    await fetch(`http://localhost:3000/todos/${id}`, {
+      method: "PUT",
+      headers: {
+        "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json"
       },
       body: JSON.stringify({ completed })
     });
-
     await fetchAndDisplayTodos();
-  } catch (err) {
-    console.error(err);
-  }
+  } catch (err) { console.error(err); }
 }
-// Delete Todo
+
 async function deleteTodo(id) {
   const token = getCookie("authToken");
-
   try {
     await fetch(`http://localhost:3000/todos/${id}`, {
       method: "DELETE",
-      headers: { "Authorization": "Bearer " + token }
+      headers: { "Authorization": `Bearer ${token}` }
     });
-
     await fetchAndDisplayTodos();
-  } catch (err) {
-    console.error(err);
-  }
+  } catch (err) { console.error(err); }
 }
 
-// Logout
 async function logout() {
   const token = getCookie("authToken");
-
   try {
     await fetch("http://localhost:3000/logout", {
       method: "POST",
-      headers: { "Authorization": "Bearer " + token }
+      headers: { "Authorization": `Bearer ${token}` }
     });
-
     deleteCookie("authToken");
     location.reload();
-  } catch (err) {
-    console.error(err);
-  }
+  } catch (err) { console.error(err); }
 }
-
 // Helpers
 function showError(message) {
   errorText.textContent = message;
   errorText.style.display = "block";
 }
-
 // Auto-login if token exists
 window.addEventListener("DOMContentLoaded", async () => {
   const token = getCookie("authToken");
