@@ -7,7 +7,7 @@ function setCookie(name, value, days = 1) {
   document.cookie = `${name}=${encodeURIComponent(value)}; path=/; expires=${expires}`;
 }
 function getCookie(name) {
-  return document.cookie.split("; ").reduce((r, v) => {
+  return document.cookie.split(";").reduce((r, v) => {
     const parts = v.split("=");
     return parts[0] === name ? decodeURIComponent(parts[1]) : r;
   }, "");
@@ -87,10 +87,7 @@ async function handleSubmit() {
       return;
     }
 
-    // Save token in cookie
     setCookie("authToken", data.token);
-
-    // Show Todo UI
     showTodoUI();
     await fetchAndDisplayTodos();
   } catch (err) {
@@ -102,14 +99,15 @@ async function handleSubmit() {
 // Todo UI Functions
 function showTodoUI() {
   authContainer.innerHTML = `
-    <h1>Your Todos</h1>
-    <button id="logoutBtn">Logout</button>
+    <div id="todoHeader">
+      <h1>Your Todos</h1>
+      <button id="logoutBtn">Logout</button>
+    </div>
     <form id="todoForm">
-      <input type="text" id="todoTitle" placeholder="Title" required />
-      <input type="text" id="todoDesc" placeholder="Description" required />
+      <input type="text" id="todoNote" placeholder="Enter note" required />
       <button type="submit">Add Todo</button>
     </form>
-    <ul id="todoList"></ul>
+    <ul id="todoList" style="display:none;"></ul>
   `;
 
   document.getElementById("logoutBtn").addEventListener("click", logout);
@@ -130,19 +128,26 @@ async function fetchAndDisplayTodos() {
     const todoList = document.getElementById("todoList");
     todoList.innerHTML = "";
 
+    if (todos.length === 0) {
+      todoList.style.display = "none";
+      return;
+    } else {
+      todoList.style.display = "flex";
+    }
+
     todos.forEach((todo) => {
       const li = document.createElement("li");
       li.classList.add("todoItem");
+      if (todo.completed) {
+        li.classList.add("completedItem");
+      } else {
+        li.classList.remove("completedItem");
+      }
 
-      const titleInput = document.createElement("input");
-      titleInput.type = "text";
-      titleInput.value = todo.title;
-      titleInput.disabled = true;
-
-      const descInput = document.createElement("input");
-      descInput.type = "text";
-      descInput.value = todo.description;
-      descInput.disabled = true;
+      const noteInput = document.createElement("input");
+      noteInput.type = "text";
+      noteInput.value = todo.title;
+      noteInput.disabled = true;
 
       const editBtn = document.createElement("button");
       editBtn.textContent = "Edit";
@@ -162,24 +167,21 @@ async function fetchAndDisplayTodos() {
       deleteBtn.addEventListener("click", () => deleteTodo(todo.id));
 
       editBtn.addEventListener("click", () => {
-        titleInput.disabled = false;
-        descInput.disabled = false;
-        titleInput.focus();
+        noteInput.disabled = false;
+        noteInput.focus();
         editBtn.style.display = "none";
         saveBtn.style.display = "inline";
       });
 
       saveBtn.addEventListener("click", async () => {
-        await editTodo(todo.id, titleInput.value, descInput.value);
-        titleInput.disabled = true;
-        descInput.disabled = true;
+        await editTodo(todo.id, noteInput.value);
+        noteInput.disabled = true;
         editBtn.style.display = "inline";
         saveBtn.style.display = "none";
         await fetchAndDisplayTodos();
       });
 
-      li.appendChild(titleInput);
-      li.appendChild(descInput);
+      li.appendChild(noteInput);
       li.appendChild(editBtn);
       li.appendChild(saveBtn);
       li.appendChild(toggleBtn);
@@ -195,9 +197,8 @@ async function fetchAndDisplayTodos() {
 async function createTodo(e) {
   e.preventDefault();
   const token = getCookie("authToken");
-  const title = document.getElementById("todoTitle").value.trim();
-  const desc = document.getElementById("todoDesc").value.trim();
-  if (!title || !desc) return;
+  const note = document.getElementById("todoNote").value.trim();
+  if (!note) return;
 
   try {
     await fetch("http://localhost:3000/todos", {
@@ -206,7 +207,7 @@ async function createTodo(e) {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, description: desc }),
+      body: JSON.stringify({ title: note, description: "" }),
     });
     document.getElementById("todoForm").reset();
     await fetchAndDisplayTodos();
@@ -215,7 +216,7 @@ async function createTodo(e) {
   }
 }
 
-async function editTodo(id, title, description) {
+async function editTodo(id, note) {
   const token = getCookie("authToken");
   try {
     await fetch(`http://localhost:3000/todos/${id}`, {
@@ -224,7 +225,7 @@ async function editTodo(id, title, description) {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, description }),
+      body: JSON.stringify({ title: note, description: "" }),
     });
   } catch (err) {
     console.error(err);
@@ -274,11 +275,13 @@ async function logout() {
     console.error(err);
   }
 }
+
 // Helpers
 function showError(message) {
   errorText.textContent = message;
   errorText.style.display = "block";
 }
+
 // Auto-login if token exists
 window.addEventListener("DOMContentLoaded", async () => {
   const token = getCookie("authToken");
