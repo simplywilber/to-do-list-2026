@@ -77,7 +77,7 @@ async function handleSubmit() {
     const response = await fetch(`http://localhost:3000/${endpoint}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ username: email, password })
+      body: JSON.stringify({ username: email, password }),
     });
 
     const data = await response.json();
@@ -93,7 +93,6 @@ async function handleSubmit() {
     // Show Todo UI
     showTodoUI();
     await fetchAndDisplayTodos();
-
   } catch (err) {
     showError("Network error. Try again.");
     console.error(err);
@@ -124,14 +123,14 @@ async function fetchAndDisplayTodos() {
 
   try {
     const res = await fetch("http://localhost:3000/todos", {
-      headers: { "Authorization": `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     const todos = await res.json();
     const todoList = document.getElementById("todoList");
     todoList.innerHTML = "";
 
-    todos.forEach(todo => {
+    todos.forEach((todo) => {
       const li = document.createElement("li");
       li.classList.add("todoItem");
 
@@ -154,7 +153,9 @@ async function fetchAndDisplayTodos() {
 
       const toggleBtn = document.createElement("button");
       toggleBtn.textContent = todo.completed ? "Mark Pending" : "Mark Done";
-      toggleBtn.addEventListener("click", () => toggleComplete(todo.id, !todo.completed));
+      toggleBtn.addEventListener("click", () =>
+        toggleComplete(todo.id, !todo.completed),
+      );
 
       const deleteBtn = document.createElement("button");
       deleteBtn.textContent = "Delete";
@@ -185,7 +186,6 @@ async function fetchAndDisplayTodos() {
       li.appendChild(deleteBtn);
       todoList.appendChild(li);
     });
-
   } catch (err) {
     console.error(err);
   }
@@ -203,14 +203,16 @@ async function createTodo(e) {
     await fetch("http://localhost:3000/todos", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, description: desc })
+      body: JSON.stringify({ title, description: desc }),
     });
     document.getElementById("todoForm").reset();
     await fetchAndDisplayTodos();
-  } catch (err) { console.error(err); }
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 async function editTodo(id, title, description) {
@@ -219,12 +221,14 @@ async function editTodo(id, title, description) {
     await fetch(`http://localhost:3000/todos/${id}`, {
       method: "PUT",
       headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, description })
+      body: JSON.stringify({ title, description }),
     });
-  } catch (err) { console.error(err); }
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 async function toggleComplete(id, completed) {
@@ -233,13 +237,15 @@ async function toggleComplete(id, completed) {
     await fetch(`http://localhost:3000/todos/${id}`, {
       method: "PUT",
       headers: {
-        "Authorization": `Bearer ${token}`,
-        "Content-Type": "application/json"
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({ completed })
+      body: JSON.stringify({ completed }),
     });
     await fetchAndDisplayTodos();
-  } catch (err) { console.error(err); }
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 async function deleteTodo(id) {
@@ -247,10 +253,12 @@ async function deleteTodo(id) {
   try {
     await fetch(`http://localhost:3000/todos/${id}`, {
       method: "DELETE",
-      headers: { "Authorization": `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     });
     await fetchAndDisplayTodos();
-  } catch (err) { console.error(err); }
+  } catch (err) {
+    console.error(err);
+  }
 }
 
 async function logout() {
@@ -258,11 +266,13 @@ async function logout() {
   try {
     await fetch("http://localhost:3000/logout", {
       method: "POST",
-      headers: { "Authorization": `Bearer ${token}` }
+      headers: { Authorization: `Bearer ${token}` },
     });
     deleteCookie("authToken");
     location.reload();
-  } catch (err) { console.error(err); }
+  } catch (err) {
+    console.error(err);
+  }
 }
 // Helpers
 function showError(message) {
